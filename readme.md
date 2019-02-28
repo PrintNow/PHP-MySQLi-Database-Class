@@ -1,30 +1,32 @@
-MysqliDb -- Simple MySQLi wrapper and object mapper with prepared statements
+# 中文翻译版
+MysqliDb - 带有预处理语句的简单MySQLi包装器和对象映射器
+
 <hr>
 
-### Table of Contents
+### 目录
 
-**[Initialization](#initialization)**  
-**[Objects mapping](#objects-mapping)**  
-**[Insert Query](#insert-query)**  
-**[Update Query](#update-query)**  
-**[Select Query](#select-query)**  
-**[Delete Query](#delete-query)**  
-**[Insert Data](#insert-data)**  
-**[Insert XML](#insert-xml)**  
-**[Running raw SQL queries](#running-raw-sql-queries)**  
-**[Query Keywords](#query-keywords)**  
-**[Where Conditions](#where--having-methods)**  
-**[Order Conditions](#ordering-method)**  
-**[Group Conditions](#grouping-method)**  
-**[Properties Sharing](#properties-sharing)**  
-**[Joining Tables](#join-method)**  
-**[Subqueries](#subqueries)**  
-**[EXISTS / NOT EXISTS condition](#exists--not-exists-condition)**  
+**[初始化](#初始化)**  
+**[对象映射](#对象映射)**  
+**[insert-插入查询](#insert-插入查询)**  
+**[update-更新查询](#update-更新查询)**  
+**[select-选择查询](#select-选择查询)**  
+**[delete-删除查询](#delete-删除查询)**  
+**[insert-插入数据](#insert-插入数据)**  
+**[插入XML ](#插入XML)**  
+**[运行原生SQL查询](#运行原生SQL查询)**  
+**[query-查询关键字](#query-查询关键字)**  
+**[where-条件查询](#where--having-methods)**  
+**[order-降序|升序条件](#ordering-降序|升序条件)**  
+**[group-组方法](#grouping-组方法)**  
+**[properties-属性共享](#properties-属性共享)**  
+**[Join-连接表](#join-连接表)**  
+**[Subqueries-子查询](#subqueries-子查询)**  
+**[EXISTS / NOT EXISTS 条件](#exists--not-exists-condition)**  
 **[Has method](#has-method)**  
-**[Helper Methods](#helper-methods)**  
+**[Helper-助手方法](#helper-助手方法)**  
 **[Transaction Helpers](#transaction-helpers)**  
-**[Error Helpers](#error-helpers)**  
-**[Table Locking](#table-locking)**  
+**[错误助手](#错误助手)**  
+**[表锁定](#表锁定)**  
 
 ## Support Me
 
@@ -34,26 +36,26 @@ Everyone's time should be valuable, so please consider donating.
 
 [Donate with paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ebutenka%40gmail%2ecom&lc=DO&item_name=mysqlidb&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-### Installation
-To utilize this class, first import MysqliDb.php into your project, and require it.
+### 安装
+要使用此类，首先将 `MysqliDb.php` 导入到您的项目中，并 `require` 它。
 
 ```php
 require_once ('MysqliDb.php');
 ```
 
-### Installation with composer
-It is also possible to install library via composer
+### 使用 *composer* 安装
+可以通过 `composer` 安装
 ```
 composer require thingengineer/mysqli-database-class:dev-master
 ```
 
-### Initialization
-Simple initialization with utf8 charset set by default:
+### 初始化
+默认情况下使用 utf8 charset 进行简单初始化：
 ```php
 $db = new MysqliDb ('host', 'username', 'password', 'databaseName');
 ```
 
-Advanced initialization:
+高级初始化：
 ```php
 $db = new MysqliDb (Array (
                 'host' => 'host',
@@ -64,42 +66,42 @@ $db = new MysqliDb (Array (
                 'prefix' => 'my_',
                 'charset' => 'utf8'));
 ```
-table prefix, port and database charset params are optional.
-If no charset should be set charset, set it to null
+表前缀，端口和数据库字符集参数是可选的。如果没有 charset 应设置 charset，请将其设置为 null
 
-Also it is possible to reuse already connected mysqli object:
+还可以重用已连接的 mysqli 对象：
+
+如果在对象创建期间未设置表前缀，则可以稍后通过单独调用来设置它：
 ```php
 $mysqli = new mysqli ('host', 'username', 'password', 'databaseName');
 $db = new MysqliDb ($mysqli);
 ```
 
-If no table prefix were set during object creation its possible to set it later with a separate call:
+如果在对象创建期间未设置 *表前缀*，则可以稍后通过单独调用来设置它：
 ```php
 $db->setPrefix ('my_');
 ```
 
-If connection to mysql will be dropped Mysqlidb will try to automatically reconnect to the database once. 
-To disable this behavoir use
+如果将删除与 mysql 的连接(也就是断开了连接)，`Mysqlidb` 将尝试自动重新连接到数据库一次。要禁用此行为使用请：
 ```php
 $db->autoReconnect = false;
 ```
 
-If you need to get already created mysqliDb object from another class or function use
+如果你需要从另一个类或函数中获取已经创建的 mysqliDb 对象
 ```php
     function init () {
-        // db staying private here
+        // db在这里保持私有
         $db = new MysqliDb ('host', 'username', 'password', 'databaseName');
     }
     ...
     function myfunc () {
-        // obtain db object created in init  ()
+        // 获取在 init() 中创建的db对象
         $db = MysqliDb::getInstance();
         ...
     }
 ```
 
-### Multiple database connection
-If you need to connect to multiple databases use following method:
+### 多个数据库连接
+如果需要连接到多个数据库，请使用以下方法：
 ```php
 $db->addConnection('slave', Array (
                 'host' => 'host',
@@ -111,17 +113,16 @@ $db->addConnection('slave', Array (
                 'charset' => 'utf8')
 );
 ```
-To select database use connection() method
+要选择数据库，请使用 `connection()` 方法
 ```php
 $users = $db->connection('slave')->get('users');
 ```
 
-### Objects mapping
-dbObject.php is an object mapping library built on top of mysqliDb to provide model representation functionality.
-See <a href='dbObject.md'>dbObject manual for more information</a>
+### 对象映射
+`dbObject.php` 是一个构建在 *mysqliDb* 之上的对象映射库，用于提供模型表示功能。有关更多信息，请参见 <a href='dbObject.md'>dbObject 手册</a>
 
-### Insert Query
-Simple example
+### insert-插入查询
+简单的例子：
 ```php
 $data = Array ("login" => "admin",
                "firstName" => "John",
@@ -132,7 +133,7 @@ if($id)
     echo 'user was created. Id=' . $id;
 ```
 
-Insert with functions use
+插入功能使用（Insert with functions use）：
 ```php
 $data = Array (
 	'login' => 'admin',
@@ -155,7 +156,7 @@ else
     echo 'insert failed: ' . $db->getLastError();
 ```
 
-Insert with on duplicate key update
+插入重复键更新（Insert with on duplicate key update）：
 ```php
 $data = Array ("login" => "admin",
                "firstName" => "John",
@@ -169,7 +170,7 @@ $db->onDuplicate($updateColumns, $lastInsertId);
 $id = $db->insert ('users', $data);
 ```
 
-Insert multiple datasets at once
+一次插入多个数据集：
 ```php
 $data = Array(
     Array ("login" => "admin",
@@ -190,7 +191,7 @@ if(!$ids) {
 }
 ```
 
-If all datasets only have the same keys, it can be simplified
+如果所有数据集只有相同的键，则可以简化：
 ```php
 $data = Array(
     Array ("admin", "John", "Doe"),
@@ -206,10 +207,10 @@ if(!$ids) {
 }
 ```
 
-### Replace Query
-<a href='https://dev.mysql.com/doc/refman/5.0/en/replace.html'>Replace()</a> method implements same API as insert();
+### replace-替换查询
+<a href='https://dev.mysql.com/doc/refman/5.0/en/replace.html'>Replace()</a>方法实现与 `insert()` 是相同的 API;
 
-### Update Query
+### update-更新查询
 ```php
 $data = Array (
 	'firstName' => 'Bobby',
@@ -226,20 +227,20 @@ else
     echo 'update failed: ' . $db->getLastError();
 ```
 
-`update()` also support limit parameter:
+`update()` 还支持限制参数：
 ```php
 $db->update ('users', $data, 10);
 // Gives: UPDATE users SET ... LIMIT 10
 ```
 
-### Select Query
-After any select/get function calls amount or returned rows is stored in $count variable
+### select-选择查询
+在任何 select/get 函数调用之后，返回的行都存储在 *$count* 变量中：
 ```php
 $users = $db->get('users'); //contains an Array of all users 
 $users = $db->get('users', 10); //contains an Array 10 users
 ```
 
-or select with custom columns set. Functions also could be used
+或选择自定义列设置。也可以使用函数：
 
 ```php
 $cols = Array ("id", "name", "email");
@@ -250,7 +251,7 @@ if ($db->count > 0)
     }
 ```
 
-or select just one row
+或者只选择一行：
 
 ```php
 $db->where ("id", 1);
@@ -261,14 +262,14 @@ $stats = $db->getOne ("users", "sum(id), count(*) as cnt");
 echo "total ".$stats['cnt']. "users found";
 ```
 
-or select one column value or function result
+或选择一个列值或功能结果：
 
 ```php
 $count = $db->getValue ("users", "count(*)");
 echo "{$count} users found";
 ```
 
-select one column value or function result from multiple rows:
+从多行中选择一个列值或函数结果：
 ```php
 $logins = $db->getValue ("users", "login", null);
 // select login from users
@@ -278,49 +279,48 @@ foreach ($logins as $login)
     echo $login;
 ```
 
-### Insert Data
-You can also load .CSV or .XML data into a specific table.
-To insert .csv data, use the following syntax:
+您还可以将 *.CSV* 或 *.XML* 数据加载到特定表中。
+要插入.csv数据，请使用以下语法：
 ```php
 $path_to_file = "/home/john/file.csv";
 $db->loadData("users", $path_to_file);
 ```
-This will load a .csv file called **file.csv** in the folder **/home/john/** (john's home directory.)
-You can also attach an optional array of options.
-Valid options are:
+这将在文件夹 **/home/john/**（john 的主目录）中加载名为 **file.csv** 的 *.csv* 文件。
+您还可以附加可选的选项数组。
+有效选项包括：
 
 ```php
 Array(
-	"fieldChar" => ';', 	// Char which separates the data
-	"lineChar" => '\r\n', 	// Char which separates the lines
-	"linesToIgnore" => 1	// Amount of lines to ignore at the beginning of the import
+	"fieldChar" => ';', 	// 分隔数据的字符
+	"lineChar" => '\r\n', 	// 分隔行的字符
+	"linesToIgnore" => 1	// 要忽略的行数在进口开始时
 );
 ```
 
-Attach them using
+使用附加它们（Attach them using）：
 ```php
 $options = Array("fieldChar" => ';', "lineChar" => '\r\n', "linesToIgnore" => 1);
 $db->loadData("users", "/home/john/file.csv", $options);
 // LOAD DATA ...
 ```
 
-You can specify to **use LOCAL DATA** instead of **DATA**:
+您可以指定使用 **LOCAL DAT** A而不是 **DATA**：
 ```php
 $options = Array("fieldChar" => ';', "lineChar" => '\r\n', "linesToIgnore" => 1, "loadDataLocal" => true);
 $db->loadData("users", "/home/john/file.csv", $options);
 // LOAD DATA LOCAL ...
 ```
 
-### Insert XML
-To load XML data into a table, you can use the method **loadXML**.
-The syntax is smillar to the loadData syntax.
+### 插入XML
+要将 XML 数据加载到表中，可以使用方法 **loadXML**。
+语法对于 loadData 语法来说是微不足道的。
 ```php
 $path_to_file = "/home/john/file.xml";
 $db->loadXML("users", $path_to_file);
 ```
 
-You can also add optional parameters.
-Valid parameters:
+您还可以添加可选参数。
+有效参数：
 ```php
 Array(
 	"linesToIgnore" => 0,		// Amount of lines / rows to ignore at the beginning of the import
@@ -328,27 +328,27 @@ Array(
 )
 ```
 
-Usage:
+用法：
 ```php
 $options = Array("linesToIgnore" => 0, "rowTag"	=> "<user>"):
 $path_to_file = "/home/john/file.xml";
 $db->loadXML("users", $path_to_file, $options);
 ```
 
-### Pagination
-Use paginate() instead of get() to fetch paginated result
+### 分页
+使用 paginate() 而不是 get() 来获取分页结果
 ```php
 $page = 1;
-// set page limit to 2 results per page. 20 by default
+// 将页面限制设置为每页 2 个结果。默认是 20
 $db->pageLimit = 2;
 $products = $db->arraybuilder()->paginate("products", $page);
 echo "showing $page out of " . $db->totalPages;
 
 ```
 
-### Result transformation / map
-Instead of getting an pure array of results its possible to get result in an associative array with a needed key. If only 2 fields to fetch will be set in get(),
-method will return result in array($k => $v) and array ($k => array ($v, $v)) in rest of the cases.
+### 结果转换/地图
+而不是获得纯粹的结果数组，可以得到带有所需键的关联数组。
+如果在 get() 中只设置了2个要获取的字段，则在其余情况下，方法将返回数组 array($k => $v) 和数组 ($k => array ($v, $v)) 中的结果。
 
 ```php
 $user = $db->map ('login')->ObjectBuilder()->getOne ('users', 'login, id');
@@ -370,8 +370,10 @@ Array
 )
 ```
 
-### Defining a return type
-MysqliDb can return result in 3 different formats: Array of Array, Array of Objects and a Json string. To select a return type use ArrayBuilder(), ObjectBuilder() and JsonBuilder() methods. Note that ArrayBuilder() is a default return type
+### 定义返回类型
+MysqliDb 可以 以3种不同的格式返回结果：数组数组，对象数组和 Json 字符串。
+要选择返回类型，请使用 ArrayBuilder()，ObjectBuilder() 和 JsonBuilder() 方法。
+请注意，ArrayBuilder() 是默认的返回类型
 ```php
 // Array return type
 $= $db->getOne("users");
@@ -383,16 +385,16 @@ echo $u->login;
 $json = $db->JsonBuilder()->getOne("users");
 ```
 
-### Running raw SQL queries
+### 运行原始SQL查询
 ```php
 $users = $db->rawQuery('SELECT * from users where id >= ?', Array (10));
 foreach ($users as $user) {
     print_r ($user);
 }
 ```
-To avoid long if checks there are couple helper functions to work with raw query select results:
+为了避免长时间检查有几个辅助函数来处理原始查询选择结果：
 
-Get 1 row of results:
+获得 1行 结果：
 ```php
 $user = $db->rawQueryOne ('select * from users where id=?', Array(10));
 echo $user['login'];
@@ -400,26 +402,26 @@ echo $user['login'];
 $user = $db->ObjectBuilder()->rawQueryOne ('select * from users where id=?', Array(10));
 echo $user->login;
 ```
-Get 1 column value as a string:
+获取 1列 值作为字符串：
 ```php
 $password = $db->rawQueryValue ('select password from users where id=? limit 1', Array(10));
 echo "Password is {$password}";
 NOTE: for a rawQueryValue() to return string instead of an array 'limit 1' should be added to the end of the query.
 ```
-Get 1 column value from multiple rows:
+从多行获取 1列 值：
 ```php
 $logins = $db->rawQueryValue ('select login from users limit 10');
 foreach ($logins as $login)
     echo $login;
 ```
 
-More advanced examples:
+更高级的例子：
 ```php
 $params = Array(1, 'admin');
 $users = $db->rawQuery("SELECT id, firstName, lastName FROM users WHERE id = ? AND login = ?", $params);
-print_r($users); // contains Array of returned rows
+print_r($users); // 包含返回行的数组
 
-// will handle any SQL query
+// 将处理任何SQL查询
 $params = Array(10, 1, 10, 11, 2, 10);
 $q = "(
     SELECT a FROM t1
@@ -431,15 +433,15 @@ $q = "(
         ORDER BY a LIMIT ?
 )";
 $resutls = $db->rawQuery ($q, $params);
-print_r ($results); // contains Array of returned rows
+print_r ($results); // 包含返回行的数组
 ```
 
-### Where / Having Methods
-`where()`, `orWhere()`, `having()` and `orHaving()` methods allows you to specify where and having conditions of the query. All conditions supported by where() are supported by having() as well.
+### where--having-methods
+`where()`, `orWhere()`, `having()` and `orHaving()` 方法允许你指定和查询具有的条件。where() 支持的所有条件也由 having() 支持。
 
-WARNING: In order to use column to column comparisons only raw where conditions should be used as column name or functions cant be passed as a bind variable.
+警告：为了仅使用列到列的比较，应将条件用作列名或函数不能作为绑定变量传递
 
-Regular == operator with variables:
+带变量的 Regular == 运算符：
 ```php
 $db->where ('id', 1);
 $db->where ('login', 'admin');
@@ -455,7 +457,7 @@ $results = $db->get ('users');
 ```
 
 
-Regular == operator with column to column comparison:
+使用列到列比较的常规 == 运算符：
 ```php
 // WRONG
 $db->where ('lastLogin', 'createdAt');
