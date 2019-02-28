@@ -1,4 +1,4 @@
-# 中文翻译版
+# 中文翻译版（Chinese Translate Version）
 MysqliDb - 带有预处理语句的简单MySQLi包装器和对象映射器
 
 <hr>
@@ -12,7 +12,7 @@ MysqliDb - 带有预处理语句的简单MySQLi包装器和对象映射器
 **[select-选择查询](#select-选择查询)**  
 **[delete-删除查询](#delete-删除查询)**  
 **[insert-插入数据](#insert-插入数据)**  
-**[插入XML ](#插入XML)**  
+**[插入XML](#插入XML)**  
 **[运行原生SQL查询](#运行原生SQL查询)**  
 **[query-查询关键字](#query-查询关键字)**  
 **[where-条件查询](#where--having-methods)**  
@@ -500,28 +500,28 @@ $results = $db->get ('users');
 // Gives: SELECT * FROM users WHERE firstName='John' OR firstName='peter'
 ```
 
-NULL comparison:
+NULL 比较:
 ```php
 $db->where ("lastName", NULL, 'IS NOT');
 $results = $db->get("users");
 // Gives: SELECT * FROM users where lastName IS NOT NULL
 ```
 
-LIKE comparison:
+LIKE 比较:
 ```php
 $db->where ("fullName", 'John%', 'like');
 $results = $db->get("users");
 // Gives: SELECT * FROM users where fullName like 'John%'
 ```
 
-Also you can use raw where conditions:
+你也可以在以下条件下使用 raw：
 ```php
 $db->where ("id != companyId");
 $db->where ("DATE(createdAt) = DATE(lastLogin)");
 $results = $db->get("users");
 ```
 
-Or raw condition with variables:
+或者带变量的原始条件：
 ```php
 $db->where ("(id = ? or id = ?)", Array(6,2));
 $db->where ("login","mike")
@@ -530,7 +530,7 @@ $res = $db->get ("users");
 ```
 
 
-Find the total number of rows matched. Simple pagination example:
+找到匹配的总行数。简单的分页示例：
 ```php
 $offset = 10;
 $count = 15;
@@ -538,8 +538,8 @@ $users = $db->withTotalCount()->get('users', Array ($offset, $count));
 echo "Showing {$count} from {$db->totalCount}";
 ```
 
-### Query Keywords
-To add LOW PRIORITY | DELAYED | HIGH PRIORITY | IGNORE and the rest of the mysql keywords to INSERT (), REPLACE (), GET (), UPDATE (), DELETE() method or FOR UPDATE | LOCK IN SHARE MODE into SELECT ():
+### 查询关键字
+添加 LOW PRIORITY | DELAYED | HIGH PRIORITY | IGNORE 和其余的 mysql 关键字为 INSERT (), REPLACE (), GET (), UPDATE (), DELETE() 方法或 FOR UPDATE | 将共享模式锁定到 SELECT()：
 ```php
 $db->setQueryOption ('LOW_PRIORITY')->insert ($table, $param);
 // GIVES: INSERT LOW_PRIORITY INTO table ...
@@ -549,20 +549,20 @@ $db->setQueryOption ('FOR UPDATE')->get ('users');
 // GIVES: SELECT * FROM USERS FOR UPDATE;
 ```
 
-Also you can use an array of keywords:
+您还可以使用一系列关键字：
 ```php
 $db->setQueryOption (Array('LOW_PRIORITY', 'IGNORE'))->insert ($table,$param);
 // GIVES: INSERT LOW_PRIORITY IGNORE INTO table ...
 ```
 
-Same way keywords could be used in SELECT queries as well:
+同样，关键字也可以在SELECT查询中使用：
 ```php
 $db->setQueryOption ('SQL_NO_CACHE');
 $db->get("users");
 // GIVES: SELECT SQL_NO_CACHE * FROM USERS;
 ```
 
-Optionally you can use method chaining to call where multiple times without referencing your object over and over:
+（可选）您可以使用方法链接多次调用，而无需反复引用对象：
 
 ```php
 $results = $db
@@ -571,14 +571,14 @@ $results = $db
 	->get('users');
 ```
 
-### Delete Query
+### delete-删除查询
 ```php
 $db->where('id', 1);
 if($db->delete('users')) echo 'successfully deleted';
 ```
 
 
-### Ordering method
+### 排序方法
 ```php
 $db->orderBy("id","asc");
 $db->orderBy("login","Desc");
@@ -587,13 +587,14 @@ $results = $db->get('users');
 // Gives: SELECT * FROM users ORDER BY id ASC,login DESC, RAND ();
 ```
 
-Order by values example:
+按值排序示例：
 ```php
 $db->orderBy('userGroup', 'ASC', array('superuser', 'admin', 'users'));
 $db->get('users');
 // Gives: SELECT * FROM users ORDER BY FIELD (userGroup, 'superuser', 'admin', 'users') ASC;
 ```
 
+如果您正在使用 setPrefix() 功能并且需要在 orderBy() 方法中使用表名，请确保使用 `` 转义表名。
 If you are using setPrefix () functionality and need to use table names in orderBy() method make sure that table names are escaped with ``.
 
 ```php
@@ -608,15 +609,15 @@ $results = $db->get ('users');
 // CORRECT: That will give: SELECT * FROM t_users ORDER BY t_users.id ASC;
 ```
 
-### Grouping method
+### 分组方法
 ```php
 $db->groupBy ("name");
 $results = $db->get ('users');
 // Gives: SELECT * FROM users GROUP BY name;
 ```
 
-Join table products with table users with LEFT JOIN by tenantID
-### JOIN method
+通过 tenantID 与表用户一起使用 LEFT JOIN 加入表产品
+### JOIN方法
 ```php
 $db->join("users u", "p.tenantID=u.tenantID", "LEFT");
 $db->where("u.id", 6);
@@ -624,8 +625,8 @@ $products = $db->get ("products p", null, "u.name, p.productName");
 print_r ($products);
 ```
 
-### Join Conditions
-Add AND condition to join statement
+### 加入条件
+添加 AND 条件以加入语句：
 ```php
 $db->join("users u", "p.tenantID=u.tenantID", "LEFT");
 $db->joinWhere("users u", "u.tenantID", 5);
@@ -633,7 +634,7 @@ $products = $db->get ("products p", null, "u.name, p.productName");
 print_r ($products);
 // Gives: SELECT  u.login, p.productName FROM products p LEFT JOIN users u ON (p.tenantID=u.tenantID AND u.tenantID = 5)
 ```
-Add OR condition to join statement
+添加 OR 条件以加入语句：
 ```php
 $db->join("users u", "p.tenantID=u.tenantID", "LEFT");
 $db->joinOrWhere("users u", "u.tenantID", 5);
@@ -642,8 +643,8 @@ print_r ($products);
 // Gives: SELECT  u.login, p.productName FROM products p LEFT JOIN users u ON (p.tenantID=u.tenantID OR u.tenantID = 5)
 ```
 
-### Properties sharing
-It is also possible to copy properties
+### 属性共享
+也可以复制属性
 
 ```php
 $db->where ("agentId", 10);
@@ -658,22 +659,22 @@ echo "total records found: " . $cnt;
 // SELECT count(id) FROM users where agentId = 10 and active = 1
 ```
 
-### Subqueries
-Subquery init
+### 子查询
+子查询初始化
 
-Subquery init without an alias to use in inserts/updates/where Eg. (select * from users)
+没有别名的子查询 init 用于 insert/updates/where Eg：（select * from users）
 ```php
 $sq = $db->subQuery();
 $sq->get ("users");
 ```
- 
-A subquery with an alias specified to use in JOINs . Eg. (select * from users) sq
+
+指定了在 JOIN 中使用的别名的子查询。例如：(select * from users) sq
 ```php
 $sq = $db->subQuery("sq");
 $sq->get ("users");
 ```
 
-Subquery in selects:
+子查询选择（Subquery in selects）：
 ```php
 $ids = $db->subQuery ();
 $ids->where ("qty", 2, ">");
@@ -684,7 +685,7 @@ $res = $db->get ("users");
 // Gives SELECT * FROM users WHERE id IN (SELECT userId FROM products WHERE qty > 2)
 ```
 
-Subquery in inserts:
+插入中的子查询（Subquery in inserts）：
 ```php
 $userIdQ = $db->subQuery ();
 $userIdQ->where ("id", 6);
@@ -699,7 +700,7 @@ $id = $db->insert ("products", $data);
 // Gives INSERT INTO PRODUCTS (productName, userId, lastUpdated) values ("test product", (SELECT name FROM users WHERE id = 6), NOW());
 ```
 
-Subquery in joins:
+连接中的子查询：
 ```php
 $usersQ = $db->subQuery ("u");
 $usersQ->where ("active", 1);
@@ -721,8 +722,8 @@ $products = $db->get ("products");
 // Gives SELECT * FROM products WHERE EXISTS (select userId from users where company='testCompany')
 ```
 
-### Has method
-A convenient function that returns TRUE if exists at least an element that satisfy the where condition specified calling the "where" method before this one.
+### Has方法
+一个方便的函数，如果存在至少一个满足where条件的元素，则返回TRUE，该元素在此之前调用“where”方法。
 ```php
 $db->where("user", $user);
 $db->where("password", md5($password));
@@ -732,26 +733,26 @@ if($db->has("users")) {
     return "Wrong user/password";
 }
 ``` 
-### Helper methods
-Disconnect from the database:
+### 助手方法
+断开与数据库的连接：
 ```php
     $db->disconnect();
 ```
 
-Reconnect in case mysql connection died:
+重新连接，以防 mysql 连接死机：
 ```php
 if (!$db->ping())
     $db->connect()
 ```
 
-Get last executed SQL query:
-Please note that function returns SQL query only for debugging purposes as its execution most likely will fail due missing quotes around char variables.
+获取上次执行的 SQL查询：
+请注意，函数返回 SQL查询 仅用于调试目的，因为它的执行很可能会因 char 变量缺少引号而失败。
 ```php
     $db->get('users');
     echo "Last executed query was ". $db->getLastQuery();
 ```
 
-Check if table exists:
+检查表(table)是否存在：
 ```php
     if ($db->tableExists ('users'))
         echo "hooray";
@@ -763,8 +764,8 @@ mysqli_real_escape_string() wrapper:
 ```
 
 ### Transaction helpers
-Please keep in mind that transactions are working on innoDB tables.
-Rollback transaction if insert fails:
+请记住，事务正在处理 innoDB 表。
+如果插入失败，则回滚事务：
 ```php
 $db->startTransaction();
 ...
@@ -778,8 +779,8 @@ if (!$db->insert ('myTable', $insertData)) {
 ```
 
 
-### Error helpers
-After you executed a query you have options to check if there was an error. You can get the MySQL error string or the error code for the last executed query. 
+### 错误助手
+执行查询后，您可以选择检查是否存在错误。您可以获取MySQL错误字符串或上次执行的查询的错误代码。
 ```php
 $db->where('login', 'admin')->update('users', ['firstName' => 'Jack']);
 
@@ -789,8 +790,8 @@ else
     echo 'Update failed. Error: '. $db->getLastError();
 ```
 
-### Query execution time benchmarking
-To track query execution time setTrace() function should be called.
+### 查询执行时间基准测试
+要跟踪查询执行时间，应调用 setTrace() 函数。
 ```php
 $db->setTrace (true);
 // As a second parameter it is possible to define prefix of the path which should be striped from filename
@@ -818,23 +819,23 @@ print_r ($db->trace);
 ```
 
 ### Table Locking
-To lock tables, you can use the **lock** method together with **setLockMethod**. 
-The following example will lock the table **users** for **write** access.
+要锁定表，可以将 **lock** 方法与 **setLockMethod** 一起使用。
+以下示例将锁定表 **用户** 以进行 **写入** 访问。
 ```php
 $db->setLockMethod("WRITE")->lock("users");
 ```
-
-Calling another **->lock()** will remove the first lock.
-You can also use
+调用另一个 **->lock()** 将删除第一个锁。
+你也可以使用
 ```php
 $db->unlock();
 ```
-to unlock the previous locked tables.
-To lock multiple tables, you can use an array.
-Example:
+解锁以前锁定的表格。
+要锁定多个表，可以使用数组。
+例子：
 ```php
 $db->setLockMethod("READ")->lock(array("users", "log"));
 ```
-This will lock the tables **users** and **log** for **READ** access only.
-Make sure you use **unlock()* afterwards or your tables will remain locked!
+这将锁定表 **users** 和 **log** 仅用于 **READ** 访问。
+确保之后使用 **unlock()**，否则您的 **table** 将保持锁定状态！
+
 
