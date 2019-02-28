@@ -5,27 +5,40 @@ MysqliDb - 带有预处理语句的简单MySQLi包装器和对象映射器
 
 ### 目录
 
-**[初始化](#初始化)**  
-**[对象映射](#对象映射)**  
-**[insert-插入查询](#insert-插入查询)**  
-**[update-更新查询](#update-更新查询)**  
+**[安装](#安装)**
+**[初始化](#初始化)**
+**[对象映射](#对象映射)**
+---
+**[insert-插入查询](#insert-插入查询)**
+**[update-更新查询](#update-更新查询)**
 **[select-选择查询](#select-选择查询)**  
 **[delete-删除查询](#delete-删除查询)**  
-**[insert-插入数据](#insert-插入数据)**  
+**[insert-插入数据](#insert-插入数据)** 
+---
 **[插入XML](#插入XML)**  
+**[分页](#分页)**  
+**[结果转换/地图](#结果转换/地图)**  
+**[定义返回类型](#定义返回类型)**  
+---
 **[运行原生SQL查询](#运行原生SQL查询)**  
-**[query-查询关键字](#query-查询关键字)**  
-**[where-条件查询](#where--having-methods)**  
-**[order-降序|升序条件](#ordering-降序|升序条件)**  
-**[group-组方法](#grouping-组方法)**  
-**[properties-属性共享](#properties-属性共享)**  
+**[where-条件查询](#where-条件查询)**  
+**[查询关键字](#查询关键字)** 
+**[子查询](#子查询)** 
+---
+**[排序方法](#排序方法)**  
+**[分组方法](#分组方法)**  
+**[JOIN方法](#JOIN方法)**  
+**[属性共享](#属性共享)**  
 **[Join-连接表](#join-连接表)**  
 **[Subqueries-子查询](#subqueries-子查询)**  
 **[EXISTS / NOT EXISTS 条件](#exists--not-exists-condition)**  
-**[Has method](#has-method)**  
-**[Helper-助手方法](#helper-助手方法)**  
+---
+**[Has方法](#Has方法)**  
+**[助手方法](#助手方法)**  
 **[Transaction Helpers](#transaction-helpers)**  
 **[错误助手](#错误助手)**  
+---
+**[查询执行时间基准测试](#查询执行时间基准测试)**  
 **[表锁定](#表锁定)**  
 
 ## Support Me
@@ -436,7 +449,7 @@ $resutls = $db->rawQuery ($q, $params);
 print_r ($results); // 包含返回行的数组
 ```
 
-### where--having-methods
+### where条件查询
 `where()`, `orWhere()`, `having()` and `orHaving()` 方法允许你指定和查询具有的条件。where() 支持的所有条件也由 having() 支持。
 
 警告：为了仅使用列到列的比较，应将条件用作列名或函数不能作为绑定变量传递
@@ -818,7 +831,7 @@ print_r ($db->trace);
 
 ```
 
-### Table Locking
+### 表锁定
 要锁定表，可以将 **lock** 方法与 **setLockMethod** 一起使用。
 以下示例将锁定表 **用户** 以进行 **写入** 访问。
 ```php
